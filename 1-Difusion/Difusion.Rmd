@@ -1,0 +1,160 @@
+---
+title: "Difusión Estacionaria: Tonatiuh"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(readr);         library(ggplot2);      library(tidyverse)
+library(FactoMineR);    library(factoextra);   library(dplyr)
+library(scatterplot3d); library(fpc);          library(psych)
+library(NbClust);       library(corrplot);     library(VIM)
+library(ggthemes);      library(DataExplorer); library(fpc)
+library(Rtsne);         library(caret);        library(mitools)
+library(vegan);         library(ggpubr);       library(haven)
+library(nortest);       library(dunn.test);    library(vcd)
+library(moments);       library(PairedData);   library(rgl)
+library(ggpubr);        library(kohonen) 
+```
+
+
+
+
+# Sección 1: Definiciones básicas
+
+Modelo matemático:
+
+$$ -\frac{\partial}{\partial x_{j}} (\Gamma \frac{\partial \psi}{\partial x_{j}}) = q$$
+
+Cuando $\Gamma$ es constante, en una dimensión podemos escribir
+
+$$ -\Gamma \frac{\partial^{2}\psi}{\partial x^{2}} = q$$
+
+en cuyo caso la solución analítica es
+
+$$ \psi(x)=(\frac{\psi_{B}-\psi_{A}}{L} + \frac{q}{2\Gamma}(L-x))x+\psi_{A} $$
+
+# Sección 2: Solución Analítica
+
+#### Caso 1: $\Gamma=1.0$ constante, sin fuente y con dominio variable.
+```{r echo=FALSE}
+  case1   <- read_csv("case1.csv")
+  case1$L <- as.character(case1$L)
+```
+
+```{r echo=FALSE, fig.height=2.5, fig.width=7}
+case1 %>%
+  ggplot(aes(x=x,y=y,col=L))+
+  geom_point()+
+  theme_bw()+
+  theme(axis.text       = element_text(size=10),
+        axis.title.y    = element_text(size=10),
+        axis.title.x    = element_text(size=10),
+        strip.text.x    = element_text(size=10),
+        strip.text.y    = element_text(size=10),
+        legend.text     = element_text(size=10),
+        legend.position = 'top',
+        legend.title    = element_text(size=10))+
+  labs( x     = 'x',
+        y     = 'psi',
+        col   = 'Domain size: ')
+
+```
+Cuando $\Gamma$ es constante, la fuente $q=0$ y variamos la longuitud del dominio, observamos que la solución es una línea recta cambiando unicamente su pendiente.
+
+#### Caso 2: $\Gamma=1.0$ constante,fuente $q=1.0$ con dominio variable
+
+```{r echo=FALSE}
+  case2   <- read_csv("case2.csv")
+  case2$L <- as.character(case2$L)
+```
+
+```{r echo=FALSE, fig.height=2.5, fig.width=7}
+case2 %>%
+  ggplot(aes(x=x,y=y,col=L))+
+  geom_point()+
+  theme_bw()+
+  theme(axis.text       = element_text(size=10),
+        axis.title.y    = element_text(size=10),
+        axis.title.x    = element_text(size=10),
+        strip.text.x    = element_text(size=10),
+        strip.text.y    = element_text(size=10),
+        legend.text     = element_text(size=10),
+        legend.position = 'top',
+        legend.title    = element_text(size=10))+
+  labs( x     = 'x',
+        y     = 'psi',
+        col  = 'Domain size: ')
+
+```
+Cuando $q=1.0$ observamos una pequeña curvatura en la solución,la cual aumenta a medida que el largo del dominio crece.
+
+#### Caso 3: $\Gamma$ variable ,fuente $q=1.0$ con dominio $L=1.0.$
+
+```{r echo=FALSE}
+  case3   <- read_csv("case3.csv")
+  case3$L <- as.character(case3$L)
+```
+
+
+```{r echo=FALSE, fig.height=2.5, fig.width=7}
+case3 %>%
+  ggplot(aes(x=x,y=y,col=L))+
+  geom_point()+
+  theme_bw()+
+  theme(axis.text       = element_text(size=10),
+        axis.title.y    = element_text(size=10),
+        axis.title.x    = element_text(size=10),
+        strip.text.x    = element_text(size=10),
+        strip.text.y    = element_text(size=10),
+        legend.text     = element_text(size=10),
+        legend.position = 'top',
+        legend.title    = element_text(size=10))+
+  labs( x     = 'x',
+        y     = 'psi',
+        col  = 'Domain size: ')
+
+```
+
+Cuando mantenemos fija la longuitud del dominio, la fuente y variamos el valor de $\Gamma$, observamos que conforme a valores más grandes de $\Gamma$ la curvatura es más pronunciada.
+
+#### Caso 4: $\Gamma=1.0$  ,fuente $q$ variable y dominio $L=1.0.$
+```{r echo=FALSE}
+  case4   <- read_csv("case4.csv")
+  case4$L <- as.character(case4$L)
+```
+
+```{r echo=FALSE, fig.height=2.5, fig.width=7}
+case4 %>%
+  ggplot(aes(x=x,y=y,col=L))+
+  geom_point()+
+  theme_bw()+
+  theme(axis.text       = element_text(size=10),
+        axis.title.y    = element_text(size=10),
+        axis.title.x    = element_text(size=10),
+        strip.text.x    = element_text(size=10),
+        strip.text.y    = element_text(size=10),
+        legend.text     = element_text(size=10),
+        legend.position = 'top',
+        legend.title    = element_text(size=10))+
+  labs( x     = 'x',
+        y     = 'psi',
+        col  = 'Domain size: ')
+
+```
+
+Conforme $\Gamma$ aumenta su magnitud la curvatura también aumenta.
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+setwd("../1-Difusion")
+data <- read_csv("1-Difusion.csv")
+```
+
+# Sección 3: SDescripción básica de los datos
+
+
+

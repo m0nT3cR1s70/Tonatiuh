@@ -1,0 +1,37 @@
+---
+title: "Difusión Estacionaria: Tonatiuh"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(readr);         library(ggplot2);      library(tidyverse)
+library(FactoMineR);    library(factoextra);   library(dplyr)
+library(scatterplot3d); library(fpc);          library(psych)
+library(NbClust);       library(corrplot);     library(VIM)
+library(ggthemes);      library(DataExplorer); library(fpc)
+library(Rtsne);         library(caret);        library(mitools)
+library(vegan);         library(ggpubr);       library(haven)
+library(nortest);       library(dunn.test);    library(vcd)
+library(moments);       library(PairedData);   library(rgl)
+library(ggpubr);        library(kohonen) 
+```
+
+
+# Sección 1: Definiciones básicas
+
+Modelo matemático:
+
+$$ -\frac{\partial}{\partial x_{j}} (\Gamma \frac{\partial \psi}{\partial x_{j}}) = q$$
+
+Cuando $\Gamma$ es constante, en una dimensión podemos escribir
+
+$$ -\Gamma \frac{\partial^{2}\psi}{\partial x^{2}} = q$$
+
+en cuyo caso la solución analítica es
+
+$$ \psi(x)=(\frac{\psi_{B}-\psi_{A}}{L} + \frac{q}{2\Gamma}(L-x))x+\psi_{A} $$
+
